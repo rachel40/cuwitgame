@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            background: linear-gradient(to right, #8e44ad, #e84393, #e74c3c);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .start-screen,
+        .game-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .start-screen h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .start-btn {
+            background-color: #ffffff;
+            color: #333333;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .start-btn:hover {
+            background-color: #f1f1f1;
+            transform: scale(1.05);
+        }
+
+        .game-container {
+            display: none;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .in-game {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .result-text {
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        .games {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .option {
+            background: white;
+            color: #333;
+            font-size: 2.5rem;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .option:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Audio element -->
+    <audio id="bgSound" src="sound suit.mp3" loop></audio>
+
+    <!-- Game container -->
+    <div id="app" class="game-container">
+        <div class="summary">
+            <h1 class="title">Cuit Game</h1>
+            <div class="summary-card">
+                <h2 id="inGame" class="in-game">Ayo Main!</h2>
+                <h3 id="result" class="result-text"></h3>
+            </div>
+        </div>
+
+        <div class="games">
+            <button class="option" onclick="pickOption('🖐')">🖐</button>
+            <button class="option" onclick="pickOption('✌')">✌</button>
+            <button class="option" onclick="pickOption('✊')">✊</button>
+        </div>
+    </div>
+
+    <!-- Start button -->
+    <div id="startScreen" class="start-screen">
+        <h1>Selamat datang di Cuit Game!</h1>
+        <button onclick="startGame()" class="start-btn">Mulai</button>
+    </div>
+
+    <script>
+        // Function to start the game and play the background music
+        function startGame() {
+            document.getElementById('app').style.display = 'block'; // Show the game container
+            document.getElementById('startScreen').style.display = 'none'; // Hide start screen
+
+            // Play background music
+            const bgSound = document.getElementById('bgSound');
+            bgSound.play();
+        }
+
+        // Function to handle player choice and game logic
+        function pickOption(params) {
+            const start = new Start();
+            start.setPlayerOption = params;
+            start.setBotOption = start.botBrain();
+            start.winCalculation();
+
+            const inGame = document.getElementById("inGame");
+            const result = document.getElementById("result");
+
+            inGame.textContent = ".....";
+            result.textContent = "";
+
+            setTimeout(() => {
+                inGame.textContent = `${start.getPlayerOption} VS ${start.getBotOption}`;
+                result.textContent = start.matchResult();
+            }, 500);
+        }
+
+        class Start {
+            constructor() {
+                this.playerName = "Kamu";
+                this.botName = "Bot";
+                this.playerOption = "";
+                this.botOption = "";
+                this.winner = "";
+            }
+
+            get getBotOption() {
+                return this.botOption;
+            }
+
+            set setBotOption(option) {
+                this.botOption = option;
+            }
+
+            get getPlayerOption() {
+                return this.playerOption;
+            }
+
+            set setPlayerOption(option) {
+                this.playerOption = option;
+            }
+
+            botBrain() {
+                const option = ["🖐", "✌", "✊"];
+                return option[Math.floor(Math.random() * option.length)];
+            }
+
+            winCalculation() {
+                if (
+                    (this.botOption === "🖐" && this.playerOption === "✌") ||
+                    (this.botOption === "✌" && this.playerOption === "✊") ||
+                    (this.botOption === "✊" && this.playerOption === "🖐")
+                ) {
+                    this.winner = this.playerName;
+                } else if (this.botOption === this.playerOption) {
+                    this.winner = "DRAW";
+                } else {
+                    this.winner = this.botName;
+                }
+            }
+
+            matchResult() {
+                return this.winner === "DRAW" ? "Seri, coba lagi!" : `${this.winner} Menang!`;
+            }
+        }
+    </script>
+</body>
+
+</html>
